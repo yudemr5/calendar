@@ -1,0 +1,53 @@
+const Web3 = require('web3');
+const BigNumber = require('bignumber.js');
+
+// 初始化 Web3 对象
+const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+// 导入 Dym ERC20 代币合约 ABI
+const dymABI = [...]; // 从 Dym 代币合约的编译文件或区块链浏览器获取 ABI
+
+// 设置发送者地址和私钥
+const senderAddress = '0xYourSenderAddress';
+const privateKey = 'YOUR_PRIVATE_KEY';
+
+// 设置 Dym 代币合约地址
+const dymContractAddress = '0xDymContractAddress';
+
+// 设置接收者地址
+const recipientAddress = '0xRecipientAddress';
+
+// 设置转账金额（以最小单位为单位，例如对于 18 位小数的代币，1 个代币的最小单位为 10^18）
+const amount = new BigNumber('1000000000000000000'); // 1 Dym (18 个零)
+
+// 实例化 Dym 代币合约
+const dymContract = new web3.eth.Contract(dymABI, dymContractAddress);
+
+// 构造转账数据
+const transferData = dymContract.methods.transfer(recipientAddress, amount.toFixed()).encodeABI();
+
+// 获取以太坊网络上的当前 gas 价格
+web3.eth.getGasPrice()
+  .then((gasPrice) => {
+    // 构造交易对象
+    const txObject = {
+      from: senderAddress,
+      to: dymContractAddress,
+      gas: 200000, // 设置 gas 限额
+      gasPrice: gasPrice, // 设置 gas 价格
+      data: transferData, // 设置转账数据
+    };
+
+    // 签名交易
+    return web3.eth.accounts.signTransaction(txObject, privateKey);
+  })
+  .then((signedTx) => {
+    // 发送签名的交易
+    return web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  })
+  .then((receipt) => {
+    console.log('Transaction receipt:', receipt);
+  })
+  .catch((error) => {
+    console.error('Error occurred:', error);
+  });

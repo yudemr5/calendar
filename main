@@ -1,0 +1,29 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"github.com/imerkle/rippled-ws-client"
+	"github.com/imerkle/rippled-ws-client/rpc"
+)
+
+func main() {
+	client := rpc.NewClient("wss://s1.ripple.com")
+	
+	senderAddress := "YourSenderAddress"
+	senderSecret := "YourSenderSecret"
+	receiverAddress := "ReceiverAddress"
+	amount := "1"
+	
+	signedTx, err := client.BuildPaymentTx(senderAddress, senderSecret, receiverAddress, amount)
+	if err != nil {
+		log.Fatalf("Error building payment transaction: %v", err)
+	}
+	
+	txID, err := client.SubmitTransaction(signedTx)
+	if err != nil {
+		log.Fatalf("Error submitting transaction: %v", err)
+	}
+	
+	fmt.Printf("XRP sent. Transaction ID: %s\n", txID)
+}

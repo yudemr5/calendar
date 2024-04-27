@@ -1,0 +1,11 @@
+from web3 import Web3
+
+# 连接到 Fantom Opera 的 RPC 端点
+fantom_rpc_url = "https://rpcapi.fantom.network/"  # 或其他 Fantom 节点
+web3 = Web3(Web3.HTTPProvider(fantom_rpc_url))
+
+# 检查连接状态
+if web3.isConnected():
+    print("成功连接到 Fantom 节点")
+else:
+    print("无法连接到 Fantom 节点")

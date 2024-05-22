@@ -1,0 +1,35 @@
+import org.bitcoinj.core.*;
+import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.SendRequest;
+import org.bitcoinj.wallet.Wallet;
+
+import java.io.File;
+
+public class BtcTransfer {
+    public static void main(String[] args) throws Exception {
+        // BitcoinJ 钱包的数据目录
+        File walletDir = new File("wallet");
+
+        // 创建或加载钱包
+        WalletAppKit kit = new WalletAppKit(MainNetParams.get(), walletDir, "wallet.dat");
+        kit.startAsync().awaitRunning();
+        Wallet wallet = kit.wallet();
+
+        // 收款地址
+        Address recipientAddress = Address.fromString(MainNetParams.get(), "RECIPIENT_ADDRESS");
+
+        // 转账金额
+        Coin amount = Coin.parseCoin("0.001");
+
+        // 创建转账请求
+        SendRequest request = SendRequest.to(recipientAddress, amount);
+
+        // 发送转账请求
+        wallet.sendCoins(request);
+
+        // 打印交易哈希
+        Transaction tx = request.tx;
+        System.out.println("Transaction hash: " + tx.getTxId());
+    }
+}

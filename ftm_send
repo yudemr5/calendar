@@ -1,0 +1,18 @@
+sender_address = "0xYourSenderAddress"  # 发送者地址
+recipient_address = "0xRecipientAddress"  # 接收者地址
+private_key = "YOUR_PRIVATE_KEY"  # 发送者的私钥
+amount_in_wei = web3.toWei("0.1", "ether")  # 转账 0.1 FTM
+
+transaction = {
+    "to": recipient_address,
+    "value": amount_in_wei,
+    "gas": 21000,  # Gas 限额
+    "gasPrice": web3.toWei("22", "gwei"),  # Gas 价格
+    "nonce": web3.eth.getTransactionCount(sender_address),
+}
+
+# 签名并发送交易
+signed_tx = web3.eth.accounts.signTransaction(transaction, private_key)
+tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+
+print("交易已发送，交易哈希:", tx_hash.hex())
